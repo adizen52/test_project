@@ -1,0 +1,24 @@
+{
+  "users": [
+    {
+      "name": "Admin",
+      "email": "root@uandex,ru",
+      "password": "qwerty123"
+    },
+    {
+      "name": "Serg",
+      "email": "qwer@123.ru",
+      "password": "12345"
+    },
+    {
+      "name": "Serg",
+      "email": "123",
+      "password": "12345"
+    },
+    {
+      "name": "Serega",
+      "email": "adixen52@yandex.ru",
+      "password": "Qwerty123456"
+    }
+  ]
+}
