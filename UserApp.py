@@ -2,53 +2,62 @@ import json
 import validators
 
 def user_login(json_object):
-    username = input('Введите ваш логин: ')
-    flag = 0
-    for i in json_object['users']:
-        if username == i['name']:
-            flag = 1
-    if flag:
-        print('Такой Логин уже существует.')
-        user_login(json_object)
-    else:
-        return username
+    while True:
+        username = input('Введите ваш логин: ')
+        flag = 0
+        for i in json_object['users']:
+            if username == i['name']:
+                flag = 1
+        if flag:
+            print('Такой Логин уже существует.')
+            continue
+        else:
+            break
+
+    return username
 
 
 def user_email(json_object):
-    email = input('Введите ваш email: ')
-    flag = 0
-    if validators.email(email, whitelist = None):
-        for i in json_object['users']:
-            if email == i['email']:
-                flag = 1
-        if flag:
-            print('Такой EMAIL уже есть.')
-            user_email(json_object)
+    while True:
+        email = input('Введите ваш email: ')
+        flag = 0
+        if validators.email(email, whitelist = None):
+            for i in json_object['users']:
+                if email == i['email']:
+                    flag = 1
+            if flag:
+                print('Такой EMAIL уже есть.')
+                continue
+            else:
+                break
         else:
-            return email
-    else:
-        print('Неправильный формат EMAIL.')
-        user_email(json_object)
+            print('Неправильный формат EMAIL.')
+            continue
+
+    return email
 
 
 def password_user():
-    password = input('Введите ПАРОЛЬ >= 12 символов,'
-                     'не менее 1 цифры, 1 большой буквы, 1 малой буквы: ')
 
     letters = set('qwertyuiopasdfghjklzxcvbnmйцукенгшщзхъфывапролджэячсмитьбю')
     numbers = set('1234567890')
-    if len(password) < 12:
-        print("Пароль должен быть 12 или более символов.")
-        password_user()
-    if len(letters.intersection(set(password))) == 0:
-        print('Должно быть не менее одной малой буквы.')
-        password_user()
-    if len(numbers.intersection(set(password))) == 0:
-        print('Должно быть не менее одной цифры.')
-        password_user()
-    if len(set(password).intersection(set(str(letters).upper()))) == 0:
-        print('Должна быть хоть одна большая буква.')
-        password_user()
+
+    while True:
+        password = input('Введите ПАРОЛЬ >= 12 символов,'
+                         'не менее 1 цифры, 1 большой буквы, 1 малой буквы: ')
+        if len(password) < 12:
+            print("Пароль должен быть 12 или более символов.")
+            continue
+        if len(letters.intersection(set(password))) == 0:
+            print('Должно быть не менее одной малой буквы.')
+            continue
+        if len(numbers.intersection(set(password))) == 0:
+            print('Должно быть не менее одной цифры.')
+            continue
+        if len(set(password).intersection(set(str(letters).upper()))) == 0:
+            print('Должна быть хоть одна большая буква.')
+            continue
+        break
 
     return password
 
@@ -65,18 +74,25 @@ def register_user(json_obj):
 
 def login(json_obj):
     usname = input('Введите Ваш логин: ')
+    count = 0
     for i in json_obj['users']:
         if i['name'] == usname:
             while True:
                 password = input('Введите пароль: ')
                 if i['password'] == password:
                     logout = True
-                    return logout
+                    sp_inf = [logout, count]
+                    return sp_inf
                 else:
                     print('Неверный пароль.')
                     continue
+        else:
+            count += 1
     else:
         print('Данного пользователя нет.')
+        logout = False
+        sp_inf = [logout, None]
+        return sp_inf
 
 def start():
 
@@ -87,8 +103,21 @@ def start():
                "Если зарегистрированы и хотите войти - 'N': " )
     if vv.lower() == 'y':
         register_user(json_obj)
-    else:
-        print(login(json_obj))
+    elif vv.lower() == 'n':
+        us_inf = login(json_obj)
+        if us_inf[0] == True:
+            qwest = input("Вы хотите удалить свою учетную запись? - 'y', \n"
+                          "Вы хотите выйти из учетной записи? - 'n': ")
+            if qwest.lower() == 'y':
+                us_inf[0] = False
+                json_obj['users'].pop(us_inf[1])
+                with open('data.json', 'w') as outfile:
+                    json.dump(json_obj, outfile, indent= 2)
+                start()
+            else:
+                print('До новых встреч.')
+
+
 
 start()
 
